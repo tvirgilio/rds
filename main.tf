@@ -207,7 +207,6 @@ resource "aws_db_subnet_group" "bd" {
   }
 }
 
-
 # Criando RDS
 resource "aws_db_instance" "wikidatabase" {
   allocated_storage = var.allocated_storage
@@ -230,6 +229,21 @@ resource "aws_db_instance" "wikidatabase" {
   }
 
 }
+
+# Criando DNS
+resource "aws_route53_zone" "primary" {
+  name = "maven-wikimedia.tk"
+}
+
+# CNAME
+resource "aws_route53_record" "wikidatabase-record" {
+  zone_id = "${aws_route53_zone.primary.zone_id}"
+  name = "mediawiki.maven-wikimedia.tk"
+  type = "CNAME"
+  ttl = "300"
+  records = ["${aws_db_instance.wikidatabase.address}"]
+}
+
 
 # ELB
 resource "aws_elb" "mw_elb" {

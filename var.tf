@@ -52,7 +52,7 @@ variable "engine_version" {
 }
 # pegar ultima versão de snapshot
 variable "skip_final_snapshot" {
-  description = "skip snapshot"
+  description = "wikidatabase"
   default = "true"
   type = string
 }
@@ -77,8 +77,6 @@ variable "name" {
 
 
 #########################################
-
-
 
 
 #Zonas de Disponibilidade 
@@ -141,7 +139,7 @@ variable "aws_tags" {
   }
 }
 
-
+# Tipo de Instancia
 variable "aws_instance_type" {
   default = "t2.micro"
 }
