@@ -29,8 +29,8 @@ A execução do código _main.tf_ consiste em alguns pontos para ser executado d
 
 # In Progress
 
-- [x] CI
+- [] CI
+- [] Regra de trafego em LoadBalancer 
 - [x] RDS Endpoint resolved
-- [x] Regra de trafego em LoadBalancer 
 - [x] Criar Projeto 
 
