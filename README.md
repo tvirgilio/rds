@@ -29,8 +29,8 @@ A execução do código _main.tf_ consiste em alguns pontos para ser executado d
 
 # In Progress
 
-- [] CI
-- [] Regra de trafego em LoadBalancer 
-- [x] RDS Endpoint resolved
+- [ ] CI de entrega do Terraform
+- [ ] Regra de trafego em LoadBalancer
+- [x] RDS Endpoint resolved DNS
 - [x] Criar Projeto 
 
