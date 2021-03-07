@@ -149,8 +149,9 @@ resource "aws_security_group" "mw_sg" {
 # Creating ElasticLoadBalancer 
 resource "aws_elb" "mw_elb" {
   name              = "media-terraform-elb"
-  subnets           = ["${aws_subnet.mw_subnet1.id}", "${aws_subnet.mw_subnet2.id}"]
-  security_groups   = ["${aws_security_group.mw_sg.id}"]
+  subnets           = ["aws_subnet.mw_subnet1.id", "aws_subnet.mw_subnet2.id"]
+  security_groups   = ["aws_security_group.mw_sg.id"]
+
   listener {
     instance_port     = 80
     instance_protocol = "http"
@@ -163,7 +164,7 @@ resource "aws_elb" "mw_elb" {
     lb_port           = 5000
     lb_protocol       = "http"
   }
-  instances       = ["${aws_instance.webserver1.id}", "${aws_instance.webserver2.id}"]
+  instances       = ["aws_instance.webserver1.id", "aws_instance.webserver2.id"]
   tags = {
     Name = "media-terraform-elb"
   }
@@ -174,7 +175,7 @@ resource "aws_elb" "mw_elb" {
 resource "aws_instance" "webserver1" {
   security_groups             = [aws_security_group.mw_sg.id]
   ami                         = "ami-07dd14faa8a17fb3e"
-  instance_type               = "t2.micro"
+  instance_type               = "t2.nano"
   key_name                    = "terraform-aws"
   subnet_id                   = aws_subnet.mw_subnet1.id
   private_ip                  = "10.0.1.10"
@@ -190,7 +191,7 @@ resource "aws_instance" "webserver1" {
 resource "aws_instance" "webserver2" {
   security_groups             = [aws_security_group.mw_sg.id]
   ami                         = "ami-07dd14faa8a17fb3e"
-  instance_type               = "t2.micro"
+  instance_type               = "t2.nano"
   key_name                    = "terraform-aws"
   subnet_id                   = aws_subnet.mw_subnet2.id
   private_ip                  = "10.0.2.20"
@@ -258,12 +259,12 @@ resource "aws_security_group" "security-group-rds" {
 
 # Creating RDS Instance
 resource "aws_db_instance" "wikidatabase" {
-  allocated_storage       = 20
-  max_allocated_storage   = 100
+  allocated_storage       = 4
+  max_allocated_storage   = 8
   storage_type            = "gp2"
   engine                  = "mysql"
   engine_version          = "5.7"
-  instance_class          = "db.t2.micro"
+  instance_class          = "db.t3.micro"
   name                    = "wikidatabase"
   username                = "wiki"
   password                = "wik987%$"
@@ -292,8 +293,8 @@ resource "aws_db_instance" "wikidatabase-replica" {
   engine                  = "mysql"
   engine_version          = "5.7"
   instance_class          = "db.t2.micro"
-  allocated_storage       = 20
-  max_allocated_storage   = 100
+  allocated_storage       = 4
+  max_allocated_storage   = 8
   storage_type            = "gp2"
   username                = "wiki"
   password                = "wik987%$"
@@ -314,17 +315,18 @@ resource "aws_db_instance" "wikidatabase-replica" {
 }
 
 # DNS zone creation (my-area)
-resource "aws_route53_zone" "area-zone" {
+resource "aws_route53_zone" "myarea" {
   name = "applicationdesktop.cf"
 }
 
 # IP assignment of RDS Endpoint with CNAME
 resource "aws_route53_record" "database-record" {
-  zone_id = aws_route53_zone.my-area.zone_id
+  allow_overwrite = true
   name    = "database.applicationdesktop.cf"
-  type    = "CNAME"
   ttl     = 30
-  records = ["${aws_db_instance.wikidatabase.address}"]
+  type    = "CNAME"
+  zone_id = aws_route53_zone.myarea.zone_id
+  records = ["aws_db_instance.wikidatabase.address"]
 }
 
 # ElasticLoadBalancer Addres for Connections
